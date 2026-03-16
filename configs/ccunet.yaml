@@ -1,0 +1,40 @@
+experiment_name: default_ccunet
+output_root: experiments/ccunet
+device: cuda
+seed: 42
+modality_names: [t1, t2, t1ce, flair]
+
+data:
+  train_image_dir: data/raw/train
+  eval_image_dir: data/raw/test
+  train_mrm_latent_path: experiments/mrm/default_mrm/artifacts/latents/train/latents.pt
+  infer_generated_latent_path: experiments/mdn/default_mdn/artifacts/generated_latents/generated_latents_class_0.pt
+
+training:
+  epochs: 50
+  batch_size: 16
+  learning_rate: 0.0001
+  num_workers: 4
+  persistent_workers: true
+  image_size: 128
+  latent_dim: 768
+  mod_embed_dim: 16
+  train_samples_per_class: 3000
+  val_total_samples: 2000
+  split_seed: 42
+  checkpoint_name: best.pt
+
+inference:
+  checkpoint: best
+  source_modality: t1
+  target_modality: t2
+  auto_use_latent_metadata: true
+  max_samples: 100
+
+evaluation:
+  checkpoint: best
+  source_modality: t1
+  target_modality: t2
+  auto_use_latent_metadata: true
+  max_samples: 100
+  save_visualizations: true

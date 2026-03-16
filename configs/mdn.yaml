@@ -1,0 +1,49 @@
+experiment_name: mdn_default
+output_root: experiments/mdn
+device: cuda
+seed: 42
+modality_names: [t1, t1ce, t2, flair]
+
+data:
+  train_latent_path: experiments/mrm/mrm_default/artifacts/latents/train/latents_train.pt
+  eval_latent_path: experiments/mrm/mrm_default/artifacts/latents/val/latents_val.pt
+
+training:
+  epochs: 150
+  batch_size: 512
+  learning_rate: 1.0e-4
+  weight_decay: 1.0e-4
+  hidden_dim: 1024
+  max_time_steps: 256
+  n_blocks: 10
+  dropout: 0.05
+  class_dropout_prob: 0.10
+  ema_decay: 0.999
+  grad_clip: 1.0
+  amp: true
+  resume_ckpt: null
+  lambda_x0: 1.0
+  lambda_proto: 0.15
+  lambda_stats: 0.05
+  lambda_style_ortho: 0.05
+  lambda_style_margin: 0.05
+  lambda_class_sep: 0.05
+  metrics_num_samples: 512
+
+generation:
+  checkpoint: best
+  target_modalities: [t1, t1ce, t2, flair]
+  n_samples_per_class: 500
+  n_sampling_steps: 100
+  cfg_scale: 2.0
+  use_ema: true
+
+evaluation:
+  checkpoint: best
+  generated_root: null
+  max_samples: 1500
+  fd_max_samples: 5000
+  umap:
+    enabled: true
+    n_neighbors: 15
+    min_dist: 0.1

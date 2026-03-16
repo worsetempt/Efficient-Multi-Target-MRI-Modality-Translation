@@ -1,0 +1,59 @@
+experiment_name: mrm_baseline
+output_root: experiments/mrm
+seed: 42
+device: cuda
+modality_names: [t1, t2, t1ce, flair]
+
+data:
+  root_dir: data/raw/brats_2d
+  train_dir: train
+  val_dir: val
+  test_dir: test
+  img_size: 224
+  patch_size: 16
+  mask_ratio: 0.25
+  max_per_modality:
+    train: 0
+    val: 2000
+    test: 1000
+
+model:
+  architecture: swin_tiny_patch4_window7_224
+  in_chans: 1
+  pretrained: true
+  loss_type: mrm_only
+  lambda_cls: 0.1
+  alpha_full: 0.1
+  beta_grad: 0.2
+
+training:
+  epochs: 10
+  batch_size: 32
+  learning_rate: 1.0e-4
+  weight_decay: 1.0e-2
+  eval_every: 2
+  save_best_only: false
+
+evaluation:
+  split: test
+  checkpoint: best
+  umap:
+    enabled: true
+    max_samples: 5000
+    n_neighbors: 15
+    min_dist: 0.1
+  linear_probe:
+    enabled: true
+    cv: 3
+  silhouette:
+    enabled: true
+  reconstruction:
+    max_batches: 50
+    save_examples: true
+    num_examples: 8
+
+runtime:
+  num_workers: 4
+  prefetch_factor: 2
+  pin_memory: true
+  amp: true

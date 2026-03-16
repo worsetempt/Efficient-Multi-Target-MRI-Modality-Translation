@@ -1,0 +1,61 @@
+experiment_name: latent_translator_baseline
+output_root: experiments/latent_translator
+device: cuda
+seed: 42
+modality_names: [t1, t1ce, t2, flair]
+
+data:
+  train_latent_paths:
+    t1: data/latents/mrm/train/t1_latents.pt
+    t1ce: data/latents/mrm/train/t1ce_latents.pt
+    t2: data/latents/mrm/train/t2_latents.pt
+    flair: data/latents/mrm/train/flair_latents.pt
+  val_latent_paths:
+    t1: data/latents/mrm/val/t1_latents.pt
+    t1ce: data/latents/mrm/val/t1ce_latents.pt
+    t2: data/latents/mrm/val/t2_latents.pt
+    flair: data/latents/mrm/val/flair_latents.pt
+  test_latent_paths:
+    t1: data/latents/mrm/test/t1_latents.pt
+    t1ce: data/latents/mrm/test/t1ce_latents.pt
+    t2: data/latents/mrm/test/t2_latents.pt
+    flair: data/latents/mrm/test/flair_latents.pt
+
+training:
+  epochs: 200
+  batch_size: 512
+  num_workers: 0
+  learning_rate: 1.0e-4
+  weight_decay: 1.0e-5
+  grad_clip: 1.0
+  amp: true
+  resume_ckpt: null
+  save_every: 10
+  ema_decay: 0.999
+  hidden_dim: 1024
+  n_blocks: 8
+  dropout: 0.05
+  use_layernorm: true
+  lambda_l1: 1.0
+  lambda_cos: 0.2
+  lambda_delta: 0.5
+  lambda_pair_consistency: 0.1
+  lambda_centroid: 0.05
+
+generation:
+  split: test
+  checkpoint: best
+  use_ema: true
+  max_samples: null
+
+evaluation:
+  split: test
+  checkpoint: best
+  use_ema: true
+  generated_root: null
+  fd_max_samples: 5000
+  max_samples: 1500
+  umap:
+    enabled: true
+    n_neighbors: 15
+    min_dist: 0.1

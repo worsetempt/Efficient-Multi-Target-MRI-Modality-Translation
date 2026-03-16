@@ -1,0 +1,40 @@
+seed: 42
+device: cuda
+experiment_name: decoder_baseline
+output_root: experiments/decoder
+
+modality_names: [t1, t1ce, t2, flair]
+
+data:
+  train_npz: data/latents/train_latents.npz
+  val_npz: data/latents/val_latents.npz
+  img_size: 224
+
+model:
+  latent_dim: 768
+  base_ch: 384
+  out_ch: 1
+
+training:
+  epochs: 50
+  batch_size: 32
+  lr: 1.0e-4
+  weight_decay: 1.0e-4
+  grad_weight: 0.15
+  ssim_weight: 0.10
+  grad_clip: 1.0
+  preview_every: 5
+  preview_items: 8
+
+evaluation:
+  checkpoint: best
+  latent_path: experiments/mdn/mdn_baseline/artifacts/generated_latents/generated_latents_class_0.pt
+  reference_npz: null
+  batch_size: 64
+  max_visualizations: 32
+
+runtime:
+  amp: true
+  num_workers: 4
+  pin_memory: true
+  prefetch_factor: 2
