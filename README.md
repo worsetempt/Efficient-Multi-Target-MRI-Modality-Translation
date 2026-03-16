@@ -4,6 +4,8 @@ A modular MRI modality translation repository built around a latent-first pipeli
 
 The project starts with **MRM**, which learns image representations and extracts latent embeddings from MRI slices. Those latents are then used by downstream modules for latent generation, latent translation, conditional image translation, and latent decoding.
 
+All notebooks in notebooks/ implements the baseline model for 2 classes/modalities
+
 ## Pipeline Summary
 
 The repository follows this pipeline:
