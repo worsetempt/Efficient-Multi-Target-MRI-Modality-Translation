@@ -1,286 +1,246 @@
 # MRI-Translator
 
-## Overview
+A modular MRI modality translation repository built around a latent-first pipeline.
 
-Modular MRI modality translation repository with an MRM encoder, MDN latent generator, latent translator, CCU-Net image translator, and latent decoder.
+The project starts with **MRM**, which learns image representations and extracts latent embeddings from MRI slices. Those latents are then used by downstream modules for latent generation, latent translation, conditional image translation, and latent decoding.
 
-## Pipeline
+## Pipeline Summary
 
-1. `mrm` trains the encoder and extracts latent artifacts.
-2. `mdn` generates class-conditional latents from MRM outputs.
-3. `latent\\\_translator` predicts target latents from source latents.
-4. `ccunet` trains on real MRM latents and infers with generated latents.
-5. `decoder` reconstructs images from latent vectors.
+The repository follows this pipeline:
 
-## Structure
+1. **MRM**
+
+   * trains the masked reconstruction encoder
+   * evaluates reconstruction and latent quality
+   * extracts latents for `train`, `val`, and `test`
+
+2. **MDN**
+
+   * consumes MRM latent outputs
+   * learns a class-conditional latent generator
+   * generates modality-conditioned latents
+   * evaluates generated latents with UMAP + FD
+
+3. **latent_translator**
+
+   * consumes MRM latent outputs
+   * learns source-to-target latent translation
+   * generates translated target latents
+   * evaluates translated latents with UMAP + FD
+
+4. **CCU-Net**
+
+   * trains on source images + real MRM target latents
+   * performs inference/eval using generated latents from either MDN or latent_translator
+   * evaluates image outputs with SSIM, PSNR, and L1
+
+5. **decoder**
+
+   * trains a latent-to-image decoder
+   * decodes generated latents from MDN or latent_translator
+   * evaluates decoded outputs with SSIM and PSNR
+
+## Repository Structure
 
 ```text
-configs/
-src/
-  datasets/
-  models/
-  training/
-  evaluation/
-  inference/
-  utils/
-experiments/
-outputs/
-notebooks/
+MRI-Translator/
+├── README.md
+├── .gitignore
+├── environment.yml
+├── requirements.txt
+├── configs/
+│   ├── mrm.yaml
+│   ├── mdn.yaml
+│   ├── latent_translator.yaml
+│   ├── ccunet.yaml
+│   └── decoder.yaml
+├── data/
+│   ├── raw/
+│   ├── processed/
+│   └── latents/
+├── experiments/
+│   ├── mrm/
+│   ├── mdn/
+│   ├── latent_translator/
+│   ├── ccunet/
+│   └── decoder/
+├── notebooks/
+├── outputs/
+└── src/
+    ├── __init__.py
+    ├── mrm_main.py
+    ├── mdn_main.py
+    ├── latent_translator_main.py
+    ├── ccunet_main.py
+    ├── decoder_main.py
+    ├── datasets/
+    ├── models/
+    ├── training/
+    ├── evaluation/
+    ├── inference/
+    └── utils/
 ```
 
 ## Setup
 
+### Conda
+
 ```bash
 conda env create -f environment.yml
 conda activate mri-translator
+```
+
+### Pip
+
+```bash
 pip install -r requirements.txt
 ```
 
-## Configs
+## Config Files
 
 * `configs/mrm.yaml`
 * `configs/mdn.yaml`
-* `configs/latent\\\_translator.yaml`
+* `configs/latent_translator.yaml`
 * `configs/ccunet.yaml`
 * `configs/decoder.yaml`
 
-## VSCode terminal commands
+Each module is driven by its YAML config instead of large CLI argument lists.
+
+## VSCode Terminal Commands
+
+Run all commands from the repository root:
 
 ```bash
-# =========================
-<<<<<<< HEAD
-
-\# 0. from repo root
-
-\# =========================
-
 cd MRI-Translator
+```
 
+### MRM
 
+Train:
 
-\# optional: create env
-
-conda env create -f environment.yml
-
-conda activate mri-translator
-
-
-
-\# or pip
-
-pip install -r requirements.txt
-
-
-
-
-
-\# =========================
-
-\# 1. MRM
-
-\# =========================
-
-
-
-\# train
-
-python -m src.mrm\_main --config configs/mrm.yaml --mode train
-
-
-
-\# eval
-
-python -m src.mrm\_main --config configs/mrm.yaml --mode eval
-
-
-
-\# extract latents for train/val/test
-
-python -m src.mrm\_main --config configs/mrm.yaml --mode extract
-
-
-
-
-
-\# =========================
-
-\# 2. MDN
-
-\# =========================
-
-
-
-\# train
-
-python -m src.mdn\_main --config configs/mdn.yaml --mode train
-
-
-
-\# generate latents
-
-python -m src.mdn\_main --config configs/mdn.yaml --mode generate
-
-
-
-\# eval generated latents
-
-python -m src.mdn\_main --config configs/mdn.yaml --mode eval
-
-
-
-
-
-\# =========================
-
-\# 3. latent\_translator
-
-\# =========================
-
-
-
-\# train
-
-python -m src.latent\_translator\_main --config configs/latent\_translator.yaml --mode train
-
-
-
-\# generate translated latents
-
-python -m src.latent\_translator\_main --config configs/latent\_translator.yaml --mode generate
-
-
-
-\# eval translated latents
-
-python -m src.latent\_translator\_main --config configs/latent\_translator.yaml --mode eval
-
-
-
-
-
-\# =========================
-
-\# 4. CCU-Net
-
-\# =========================
-
-
-
-\# train using MRM latents
-
-python -m src.ccunet\_main --config configs/ccunet.yaml --mode train
-
-
-
-\# infer using generated latents from MDN or latent\_translator
-
-python -m src.ccunet\_main --config configs/ccunet.yaml --mode infer
-
-
-
-\# eval
-
-python -m src.ccunet\_main --config configs/ccunet.yaml --mode eval
-
-
-
-
-
-\# =========================
-
-\# 5. decoder
-
-\# =========================
-
-
-
-\# train
-
-python -m src.decoder\_main --config configs/decoder.yaml --mode train
-
-
-
-\# eval / decode generated latents
-
-python -m src.decoder\_main --config configs/decoder.yaml --mode eval```
-
-=======
-# 0. from repo root
-# =========================
-cd MRI-Translator
-
-# optional: create env
-conda env create -f environment.yml
-conda activate mri-translator
-
-# or pip
-pip install -r requirements.txt
-
-
-# =========================
-# 1. MRM
-# =========================
-
-# train
+```bash
 python -m src.mrm_main --config configs/mrm.yaml --mode train
+```
 
-# eval
+Evaluate:
+
+```bash
 python -m src.mrm_main --config configs/mrm.yaml --mode eval
+```
 
-# extract latents for train/val/test
+Extract latents:
+
+```bash
 python -m src.mrm_main --config configs/mrm.yaml --mode extract
+```
 
+### MDN
 
-# =========================
-# 2. MDN
-# =========================
+Train:
 
-# train
+```bash
 python -m src.mdn_main --config configs/mdn.yaml --mode train
+```
 
-# generate latents
+Generate latents:
+
+```bash
 python -m src.mdn_main --config configs/mdn.yaml --mode generate
+```
 
-# eval generated latents
+Evaluate:
+
+```bash
 python -m src.mdn_main --config configs/mdn.yaml --mode eval
+```
 
+### latent_translator
 
-# =========================
-# 3. latent_translator
-# =========================
+Train:
 
-# train
+```bash
 python -m src.latent_translator_main --config configs/latent_translator.yaml --mode train
+```
 
-# generate translated latents
+Generate translated latents:
+
+```bash
 python -m src.latent_translator_main --config configs/latent_translator.yaml --mode generate
+```
 
-# eval translated latents
+Evaluate:
+
+```bash
 python -m src.latent_translator_main --config configs/latent_translator.yaml --mode eval
+```
 
+### CCU-Net
 
-# =========================
-# 4. CCU-Net
-# =========================
+Train:
 
-# train using MRM latents
+```bash
 python -m src.ccunet_main --config configs/ccunet.yaml --mode train
+```
 
-# infer using generated latents from MDN or latent_translator
+Infer:
+
+```bash
 python -m src.ccunet_main --config configs/ccunet.yaml --mode infer
+```
 
-# eval
+Evaluate:
+
+```bash
 python -m src.ccunet_main --config configs/ccunet.yaml --mode eval
+```
 
+### decoder
 
-# =========================
-# 5. decoder
-# =========================
+Train:
 
-# train
+```bash
 python -m src.decoder_main --config configs/decoder.yaml --mode train
+```
 
-# eval / decode generated latents
+Evaluate:
+
+```bash
 python -m src.decoder_main --config configs/decoder.yaml --mode eval
 ```
->>>>>>> 938b8dee42a41cbb90d5a80ed559d4e49f2cce04
+
+## Expected Execution Order
+
+A typical end-to-end workflow is:
+
+1. Train MRM
+2. Evaluate MRM
+3. Extract MRM latents
+4. Train MDN and/or latent_translator
+5. Generate downstream latents
+6. Evaluate generated latents
+7. Train CCU-Net on real MRM latents
+8. Run CCU-Net inference/eval with generated latents
+9. Train decoder
+10. Decode/evaluate generated latents with decoder
+
+## Outputs
+
+All module outputs are saved under `experiments/`.
+
+Typical artifacts include:
+
+* checkpoints
+* metrics
+* visualizations
+* extracted latents
+* generated latents
+* translated latents
+* decoded outputs
+
+## Notes
+
+* MRM is the canonical upstream latent source.
+* MDN and latent_translator must consume MRM latent outputs using the shared latent contract.
+* CCU-Net inference/eval must accept generated latents from either MDN or latent_translator.
+* decoder eval must decode generated latents from either MDN or latent_translator.
+* Keep modality naming, split naming, and config keys consistent across all modules.
