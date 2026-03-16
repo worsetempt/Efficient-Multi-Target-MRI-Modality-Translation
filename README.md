@@ -41,22 +41,82 @@ pip install -r requirements.txt
 
 ## VSCode terminal commands
 ```bash
-python -m src.mrm_main train --config configs/mrm.yaml
-python -m src.mrm_main eval --config configs/mrm.yaml
-python -m src.mrm_main extract --config configs/mrm.yaml
+# =========================
+# 0. from repo root
+# =========================
+cd MRI-Translator
 
-python -m src.mdn_main train --config configs/mdn.yaml
-python -m src.mdn_main generate --config configs/mdn.yaml
-python -m src.mdn_main eval --config configs/mdn.yaml
+# optional: create env
+conda env create -f environment.yml
+conda activate mri-translator
 
-python -m src.latent_translator_main train --config configs/latent_translator.yaml
-python -m src.latent_translator_main generate --config configs/latent_translator.yaml
-python -m src.latent_translator_main eval --config configs/latent_translator.yaml
+# or pip
+pip install -r requirements.txt
 
-python -m src.ccunet_main train --config configs/ccunet.yaml
-python -m src.ccunet_main infer --config configs/ccunet.yaml
-python -m src.ccunet_main eval --config configs/ccunet.yaml
 
-python -m src.decoder_main train --config configs/decoder.yaml
-python -m src.decoder_main eval --config configs/decoder.yaml
+# =========================
+# 1. MRM
+# =========================
+
+# train
+python -m src.mrm_main --config configs/mrm.yaml --mode train
+
+# eval
+python -m src.mrm_main --config configs/mrm.yaml --mode eval
+
+# extract latents for train/val/test
+python -m src.mrm_main --config configs/mrm.yaml --mode extract
+
+
+# =========================
+# 2. MDN
+# =========================
+
+# train
+python -m src.mdn_main --config configs/mdn.yaml --mode train
+
+# generate latents
+python -m src.mdn_main --config configs/mdn.yaml --mode generate
+
+# eval generated latents
+python -m src.mdn_main --config configs/mdn.yaml --mode eval
+
+
+# =========================
+# 3. latent_translator
+# =========================
+
+# train
+python -m src.latent_translator_main --config configs/latent_translator.yaml --mode train
+
+# generate translated latents
+python -m src.latent_translator_main --config configs/latent_translator.yaml --mode generate
+
+# eval translated latents
+python -m src.latent_translator_main --config configs/latent_translator.yaml --mode eval
+
+
+# =========================
+# 4. CCU-Net
+# =========================
+
+# train using MRM latents
+python -m src.ccunet_main --config configs/ccunet.yaml --mode train
+
+# infer using generated latents from MDN or latent_translator
+python -m src.ccunet_main --config configs/ccunet.yaml --mode infer
+
+# eval
+python -m src.ccunet_main --config configs/ccunet.yaml --mode eval
+
+
+# =========================
+# 5. decoder
+# =========================
+
+# train
+python -m src.decoder_main --config configs/decoder.yaml --mode train
+
+# eval / decode generated latents
+python -m src.decoder_main --config configs/decoder.yaml --mode eval
 ```
