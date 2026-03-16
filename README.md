@@ -246,3 +246,13 @@ Typical artifacts include:
 * CCU-Net inference/eval must accept generated latents from either MDN or latent_translator.
 * decoder eval must decode generated latents from either MDN or latent_translator.
 * Keep modality naming, split naming, and config keys consistent across all modules.
+
+## Contributors
+
+* William Liu — UC San Diego  
+* Advaith Modali — UC San Diego  
+* Nitin Venkatesan — UC San Diego
+
+## License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
