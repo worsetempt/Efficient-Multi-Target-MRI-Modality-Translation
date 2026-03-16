@@ -1,0 +1,28 @@
+name: mri-translator
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - scipy
+  - pandas
+  - scikit-learn
+  - scikit-image
+  - matplotlib
+  - pillow
+  - pyyaml
+  - tqdm
+  - jupyter
+  - ipykernel
+  - einops
+  - umap-learn
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=12.1
+  - pip:
+      - timm
