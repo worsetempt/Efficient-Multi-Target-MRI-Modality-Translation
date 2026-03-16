@@ -48,6 +48,7 @@ pip install -r requirements.txt
 
 ```bash
 # =========================
+<<<<<<< HEAD
 
 \# 0. from repo root
 
@@ -203,3 +204,83 @@ python -m src.decoder\_main --config configs/decoder.yaml --mode train
 
 python -m src.decoder\_main --config configs/decoder.yaml --mode eval```
 
+=======
+# 0. from repo root
+# =========================
+cd MRI-Translator
+
+# optional: create env
+conda env create -f environment.yml
+conda activate mri-translator
+
+# or pip
+pip install -r requirements.txt
+
+
+# =========================
+# 1. MRM
+# =========================
+
+# train
+python -m src.mrm_main --config configs/mrm.yaml --mode train
+
+# eval
+python -m src.mrm_main --config configs/mrm.yaml --mode eval
+
+# extract latents for train/val/test
+python -m src.mrm_main --config configs/mrm.yaml --mode extract
+
+
+# =========================
+# 2. MDN
+# =========================
+
+# train
+python -m src.mdn_main --config configs/mdn.yaml --mode train
+
+# generate latents
+python -m src.mdn_main --config configs/mdn.yaml --mode generate
+
+# eval generated latents
+python -m src.mdn_main --config configs/mdn.yaml --mode eval
+
+
+# =========================
+# 3. latent_translator
+# =========================
+
+# train
+python -m src.latent_translator_main --config configs/latent_translator.yaml --mode train
+
+# generate translated latents
+python -m src.latent_translator_main --config configs/latent_translator.yaml --mode generate
+
+# eval translated latents
+python -m src.latent_translator_main --config configs/latent_translator.yaml --mode eval
+
+
+# =========================
+# 4. CCU-Net
+# =========================
+
+# train using MRM latents
+python -m src.ccunet_main --config configs/ccunet.yaml --mode train
+
+# infer using generated latents from MDN or latent_translator
+python -m src.ccunet_main --config configs/ccunet.yaml --mode infer
+
+# eval
+python -m src.ccunet_main --config configs/ccunet.yaml --mode eval
+
+
+# =========================
+# 5. decoder
+# =========================
+
+# train
+python -m src.decoder_main --config configs/decoder.yaml --mode train
+
+# eval / decode generated latents
+python -m src.decoder_main --config configs/decoder.yaml --mode eval
+```
+>>>>>>> 938b8dee42a41cbb90d5a80ed559d4e49f2cce04
